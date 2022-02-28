@@ -1,3 +1,24 @@
 "use strict";
 
-console.log("hello");
+const id = document.querySelector("#id");
+const pwd = document.querySelector("#pwd");
+const submit = document.querySelector("#btn");
+
+function login() {
+  const req = {
+    id: id.value,
+    pwd: pwd.value,
+  };
+
+  fetch("/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(req),
+  }) //
+    .then((res) => res.json()) //
+    .then(console.log);
+}
+
+submit.addEventListener("click", login);
