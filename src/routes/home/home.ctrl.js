@@ -11,11 +11,20 @@ const output = {
   login: (req, res) => {
     res.render("home/login.ejs");
   },
+
+  register: (req, res) => {
+    res.render("home/register.ejs");
+  },
 };
+
 const process = {
   login: (req, res) => {
     const user = new User(req.body);
     return res.json(user.login());
+  },
+  register: (req, res) => {
+    const user = new User(req.body);
+    return res.json(user.register());
   },
 };
 

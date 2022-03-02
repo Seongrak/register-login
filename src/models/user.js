@@ -18,6 +18,10 @@ class User {
     }
     return { success: false, msg: "Wrong ID" };
   }
+
+  register() {
+    return UserStorage.save(this.body);
+  }
 }
 
 module.exports = User;
