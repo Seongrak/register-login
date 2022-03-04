@@ -3,15 +3,14 @@
 const fs = require("fs").promises;
 
 class UserStorage {
-  static getUsers(...fields) {
-    //const users = this.#users;
-    const newUsers = fields.reduce((newUsers, field) => {
-      if (users.hasOwnProperty(field)) {
-        newUsers[field] = users[field];
-      }
-      return newUsers;
-    }, {});
-    return newUsers;
+  static getUsers() {
+    return fs
+      .readFile("./src/databases/users.json")
+      .then((data) => {
+        const users = JSON.parse(data);
+        return users;
+      })
+      .catch(console.error);
   }
 
   static getUserInfo(id) {
@@ -32,11 +31,15 @@ class UserStorage {
       .catch(console.log);
   }
 
-  static save(userInfo) {
-    //const users = this.#users;
+  static async save(userInfo) {
+    const users = await this.getUsers();
+    if (users.id.includes(userInfo.id)) {
+      throw "ID already exists";
+    }
     users.id.push(userInfo.id);
-    users.pwd.push(userInfo.name);
+    users.pwd.push(userInfo.pwd);
     users.name.push(userInfo.name);
+    fs.writeFile("./src/databases/users.json", JSON.stringify(users));
     return { success: true };
   }
 }

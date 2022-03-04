@@ -19,8 +19,13 @@ class User {
     return { success: false, msg: "Wrong ID" };
   }
 
-  register() {
-    return UserStorage.save(this.body);
+  async register() {
+    try {
+      const respose = await UserStorage.save(this.body);
+      return respose;
+    } catch (err) {
+      return { success: false, msg: err };
+    }
   }
 }
 
