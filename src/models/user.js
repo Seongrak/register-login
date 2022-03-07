@@ -8,15 +8,19 @@ class User {
   }
 
   async login() {
-    const users = await UserStorage.getUserInfo(this.body.id);
+    try {
+      const users = await UserStorage.getUserInfo(this.body.id);
 
-    if (users.id) {
-      if (users.id === this.body.id && users.pwd === this.body.pwd) {
-        return { success: true };
+      if (users.id) {
+        if (users.id === this.body.id && users.pwd === this.body.pwd) {
+          return { success: true };
+        }
+        return { success: false, msg: "Wrong password" };
       }
-      return { success: false, msg: "Wrong password" };
+      return { success: false, msg: "Wrong ID" };
+    } catch (err) {
+      return { success: false, msg: err };
     }
-    return { success: false, msg: "Wrong ID" };
   }
 
   async register() {

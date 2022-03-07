@@ -1,46 +1,26 @@
 "use stirct";
 
-const fs = require("fs").promises;
+const db = require("../config/db");
 
 class UserStorage {
-  static getUsers() {
-    return fs
-      .readFile("./src/databases/users.json")
-      .then((data) => {
-        const users = JSON.parse(data);
-        return users;
-      })
-      .catch(console.error);
-  }
-
   static getUserInfo(id) {
-    //const users = this.#users;
-
-    return fs
-      .readFile("./src/databases/users.json")
-      .then((data) => {
-        const users = JSON.parse(data);
-        const idx = users.id.indexOf(id);
-        const userInfo = Object.keys(users).reduce((newUser, info) => {
-          newUser[info] = users[info][idx];
-          return newUser;
-        }, {});
-
-        return userInfo;
-      })
-      .catch(console.log);
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM users WHERE id = ?;";
+      db.query(query, [id], (err, data) => {
+        if (err) reject(`${err}`);
+        resolve(data[0]);
+      });
+    });
   }
 
   static async save(userInfo) {
-    const users = await this.getUsers();
-    if (users.id.includes(userInfo.id)) {
-      throw "ID already exists";
-    }
-    users.id.push(userInfo.id);
-    users.pwd.push(userInfo.pwd);
-    users.name.push(userInfo.name);
-    fs.writeFile("./src/databases/users.json", JSON.stringify(users));
-    return { success: true };
+    return new Promise((resolve, reject) => {
+      const query = "INSERT INTO users(id,name,pwd) VALUES(?,?,?);";
+      db.query(query, [userInfo.id, userInfo.name, userInfo.pwd], (err) => {
+        if (err) reject(`${err}`);
+        resolve({ success: true });
+      });
+    });
   }
 }
 module.exports = UserStorage;
